@@ -172,7 +172,7 @@
   .timer{position:fixed;top:calc(2.6vh + 10px);left:50%;transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--paper);padding:6px 10px;display:none;gap:14px;font:400 13px/1 var(--f-mono);letter-spacing:.06em}
   .timer.on{display:flex} .timer .over{text-decoration:underline}
   .notes{display:none}
-  .notes-ov{position:fixed;left:var(--edge);right:var(--edge);bottom:calc(clamp(48px,4.8vh,76px) + 34px);z-index:30;background:var(--paper);border:1.5px solid var(--ink);padding:var(--gap-sm) var(--gap-md);display:none;max-height:44vh;overflow:auto;grid-template-columns:150px 1fr;gap:var(--gap-md)}
+  .notes-ov{position:fixed;left:var(--edge);right:var(--edge);bottom:calc(clamp(48px,4.8vh,76px) + 34px);z-index:30;background:var(--paper);border:1.5px solid var(--ink);padding:var(--gap-sm) var(--gap-md);display:none;max-height:44vh;overflow:auto;grid-template-columns:200px 1fr;gap:var(--gap-md)}
   .notes-ov.on{display:grid}
   .notes-ov p{font:400 clamp(15px,1.05vw,19px)/1.5 var(--f-body);margin-bottom:.5em}
   .notes-ov .meta{display:flex;flex-direction:column;gap:10px;border-right:1px solid var(--ink-faint);padding-right:var(--gap-sm)}
@@ -184,7 +184,7 @@
   .deck.overview .slide.active{outline:4px solid var(--ink)}
   .deck.overview .slide iframe{visibility:hidden}
   .deck.overview [data-rise]{opacity:1;transform:none}
-  body.ov .nav-hint,body.ov .notes-ov{display:none!important}
+  body.ov .nav-hint,body.ov .notes-ov,body.ov .timer{display:none!important}
 
   @media (prefers-reduced-motion:reduce){[data-rise]{transition:none;opacity:1;transform:none}}
 
@@ -1062,8 +1062,9 @@
   /* ── overview grid (O) ── */
   let ov = false;
   function layoutOverview() {
-    const cols = 4, gap = 24, W = innerWidth, s = (W - gap * (cols + 1)) / cols / W;
-    slides.forEach((sl, k) => { const c = k % cols, r = Math.floor(k / cols); sl.style.transform = `translate(${gap + c * (W * s + gap)}px, ${gap + r * (innerHeight * s + gap)}px) scale(${s})`; });
+    const cols = 4, rows = Math.ceil(slides.length / cols), gap = 20, W = innerWidth, H = innerHeight;
+    const s = Math.min((W - gap * (cols + 1)) / cols / W, (H - gap * (rows + 1)) / rows / H), x0 = (W - cols * W * s - (cols - 1) * gap) / 2;
+    slides.forEach((sl, k) => { const c = k % cols, r = Math.floor(k / cols); sl.style.transform = `translate(${x0 + c * (W * s + gap)}px, ${gap + r * (H * s + gap)}px) scale(${s})`; });
   }
   function toggleOverview(on = !ov) {
     ov = on; deckEl.classList.toggle("overview", ov); document.body.classList.toggle("ov", ov);
