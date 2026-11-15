@@ -186,3 +186,6 @@ svg.map{width:100%;height:auto;background:var(--paper);border:1.5px solid var(--
   .lots{grid-template-columns:repeat(3,1fr)}
   .filters input{width:100%}
 }
+footer.sim[hidden]{display:none}
+body.bare main.page{padding-bottom:40px}
+.item h1.h-1{font-size:clamp(34px,3.4vw,58px)}

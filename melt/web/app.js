@@ -36,7 +36,7 @@ function chrome(route) {
 }
 function renderTicker() {
   const el = $('#ticker'); if (!el) return;
-  const items = market.feed.slice(0, 14).map((e) => { const it = market.get(e.id); if (!it) return ''; const n = it.name.split(',')[0];
+  const items = [...market.feed.filter((e) => e.type !== 'watch'), ...market.feed.filter((e) => e.type === 'watch' && e.n > 1)].slice(0, 14).map((e) => { const it = market.get(e.id); if (!it) return ''; const n = it.name.split(',')[0];
     return { sold: `SOLD · ${n} · ${money(e.price, false)} · ${dormName(it.dorm)}`, zero: `$0 · ${n} enters the Kindness Window`, free: `FREE · ${n} · open to everyone`, donation: `→ DONATION · ${n} · truck scheduled`, watch: `+${e.n} watching · ${n}`, listed: `NEW · ${n} starts melting` }[e.type] || ''; }).filter(Boolean);
   const base = items.length ? items : ['Move-out week is live', 'Every price melts toward $0', 'At $0, students with need claim first', 'Unclaimed → donation truck, never the dumpster'];
   el.innerHTML = [...base, ...base].map((s) => `<span>${s}</span><span>✶</span>`).join('');

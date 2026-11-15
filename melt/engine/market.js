@@ -11,7 +11,10 @@ export class Market {
     this.seed = seed; this.now = now; this.items = buildCatalog(seed, now); this.feed = []; this.auction = null;
     this.scores = Object.fromEntries(CLAIMANTS.map((c, i) => [c.id, needScore(c, mulberry32(seed + i))]));
     for (const it of this.items) { it.status = STATUS.MELTING; it.watchers = 0; }
-    this.advance(0);
+    // replay the market's history up to `now`, so the demo opens mid-week with real outcomes
+    const target = this.now; this.now = 0;
+    while (this.now < target) this.advance(Math.min(1, target - this.now));
+    this.feed.length = Math.min(this.feed.length, 24);
   }
   age(it) { return this.now - it.listedAt; }
   /** live view of one item */

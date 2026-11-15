@@ -53,8 +53,9 @@ http.createServer(async (req, res) => {
       if (m && req.method === method) { const out = await fn(m, q, method === 'POST' ? await body(req) : {}); return out ? json(res, 200, out) : json(res, 404, { error: 'not found' }); }
     }
     if (path.startsWith('/api/')) return json(res, 404, { error: 'no route' });
+    if (path === '/' || path === '/live' || path === '/join') { res.writeHead(302, { Location: '/web/' + (path === '/' ? '' : '#' + path) }); return res.end(); }
     // static
-    let file = normalize(join(ROOT, path === '/' ? 'web/index.html' : decodeURIComponent(path)));
+    let file = normalize(join(ROOT, decodeURIComponent(path)));
     if (!file.startsWith(ROOT)) return json(res, 403, { error: 'forbidden' });
     if ((await stat(file).catch(() => null))?.isDirectory()) file = join(file, 'index.html');
     const data = await readFile(file);

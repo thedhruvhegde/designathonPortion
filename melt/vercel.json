@@ -1,10 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/web/index.html" },
-    { "source": "/live", "destination": "/web/index.html" },
-    { "source": "/join", "destination": "/web/index.html" }
+  "redirects": [
+    { "source": "/", "destination": "/web/", "permanent": false },
+    { "source": "/live", "destination": "/web/#/live", "permanent": false },
+    { "source": "/join", "destination": "/web/#/join", "permanent": false }
   ],
   "headers": [{ "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }]
 }
