@@ -6,6 +6,7 @@ import { glyph } from './glyphs.js';
 import * as C from './charts.js';
 import { kindnessView, routesView, impactView } from './panels.js';
 import { liveView, joinView } from './live.js';
+import { fetchLiveCatalog, applyCatalog } from './catalog-live.js';
 
 export const MOVE_OUT = 84; // market hour of the hard move-out deadline
 export const market = new Market({ seed: 42, now: 30 });
@@ -42,72 +43,90 @@ function renderTicker() {
   el.innerHTML = [...base, ...base].map((s) => `<span>${s}</span><span>✶</span>`).join('');
 }
 
-// ── market ────────────────────────────────────────────────────────────────
-const ui = { cat: 'all', dorm: 'all', sort: 'fastest', q: '' };
+// ── market (Marketplace layout) ───────────────────────────────────────────
+const ui = { cat: 'all', dorm: 'all', sort: 'fastest', q: '', tab: 'browse' };
+export const prefs = { riso: (() => { try { return localStorage.getItem('melt-riso') === '1'; } catch { return false; } })() };
+const CATS = [['all', 'Browse all', 'bins'], ['furniture', 'Furniture', 'futon'], ['appliance', 'Appliances', 'fridge'], ['electronics', 'Electronics', 'monitor'], ['kitchen', 'Kitchen', 'kettle'], ['decor', 'Home decor', 'lamp'], ['clothing', 'Clothing & shoes', 'parka'], ['bike', 'Sports & bikes', 'bike'], ['books', 'Textbooks', 'books']];
+export const art = (v, cls = '') => v.image
+  ? `<div class="photo ${prefs.riso ? 'riso' : ''} ${cls}"><img src="${v.image}" alt="${v.name.replace(/"/g, '')}" loading="lazy" referrerpolicy="no-referrer"></div>`
+  : `<div class="photo glyphy ${cls}">${glyph(v.glyph, { label: v.name })}</div>`;
+export const ago = (hrs) => hrs < 1 ? `${Math.max(1, Math.round(hrs * 60))} minutes ago` : hrs < 24 ? `${Math.round(hrs)} hours ago` : `${Math.round(hrs / 24)} days ago`;
 function marketView(root) {
-  const im = market.impact();
+  root.className = 'page fb';
   root.innerHTML = `
-  <section class="hero">
-    <div><span class="cap">Move-out week · live market</span>
-      <h1 class="h-hero" style="margin-top:14px">Everything<br><em>melts.</em></h1>
-      <p style="max-width:52ch;margin-top:18px;font-size:17px">Every price slides toward $0 on a public curve. When an item hits zero, students who need it most get first claim. Whatever's left goes on a donation truck. <em>Nothing ends in the dumpster.</em></p></div>
-    <div><div class="stats">
-      <div><span class="cap-sm">Kept from landfill</span><span class="num" id="h-kg">—</span><span class="mono dim" style="font-size:11px">KG · LIVE</span></div>
-      <div><span class="cap-sm">CO₂e avoided</span><span class="num" id="h-co2">—</span><span class="mono dim" style="font-size:11px">KG · EST.</span></div>
-      <div><span class="cap-sm">Melting now</span><span class="num" id="h-live">—</span><span class="mono dim" style="font-size:11px">OF ${market.items.length} LISTINGS</span></div>
-    </div></div>
-  </section>
-  <div class="filters">
-    ${['all', 'furniture', 'appliance', 'electronics', 'kitchen', 'decor', 'clothing', 'bike', 'books'].map((c) => `<button class="chip ${ui.cat === c ? 'solid' : ''}" data-cat="${c}">${c}</button>`).join('')}
-    <span class="sp"></span>
-    <input type="search" id="q" placeholder="Search futon, lamp, bike…" value="${ui.q}" aria-label="Search">
-    <select id="dorm" aria-label="Dorm"><option value="all">All dorms</option>${CAMPUS.dorms.map((d) => `<option value="${d.id}" ${ui.dorm === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select>
-    <select id="sort" aria-label="Sort">${[['fastest', 'Melting fastest'], ['hot', 'Most watched'], ['cheap', 'Lowest price'], ['ending', 'Free soonest']].map(([v, l]) => `<option value="${v}" ${ui.sort === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
-  </div>
-  <div class="grid" id="grid"></div>`;
+  <div class="fbwrap">
+    <aside class="side">
+      <div class="side-h"><h1 class="h-2">Marketplace</h1><span class="cap-sm dim">Move-out week · prices melt</span></div>
+      <input type="search" id="q" placeholder="Search Melt Marketplace" value="${ui.q}" aria-label="Search">
+      <nav class="side-nav">
+        ${[['browse', 'Browse all', 'bins'], ['fast', 'Melting fast', 'lights'], ['free', 'Free now · Kindness', 'plant'], ['watching', 'Most watched', 'speaker']].map(([k, l, g]) => `<button data-tab="${k}" class="${ui.tab === k ? 'on' : ''}"><span class="ico">${glyph(g)}</span>${l}</button>`).join('')}
+      </nav>
+      <a class="btn solid" href="#/sell" style="width:100%">+ Create new listing</a>
+      <div class="side-sec"><span class="cap-sm">Location</span>
+        <select id="dorm" aria-label="Dorm"><option value="all">All of campus · within 1 mi</option>${CAMPUS.dorms.map((d) => `<option value="${d.id}" ${ui.dorm === d.id ? 'selected' : ''}>${d.name}</option>`).join('')}</select></div>
+      <div class="side-sec"><span class="cap-sm">Categories</span>
+        <nav class="side-nav">${CATS.map(([c, l, g]) => `<button data-cat="${c}" class="${ui.cat === c ? 'on' : ''}"><span class="ico">${glyph(g)}</span>${l}</button>`).join('')}</nav></div>
+      <div class="side-sec impact-mini">
+        <div><span class="num" id="h-kg">—</span><span class="cap-sm">kg kept from landfill</span></div>
+        <div><span class="num" id="h-co2">—</span><span class="cap-sm">kg CO₂e avoided · est.</span></div>
+      </div>
+    </aside>
+    <section class="feed">
+      <div class="feed-h">
+        <div><h2 class="h-2" id="feedTitle">Today's picks</h2><p class="dim" style="font-size:14px;margin-top:6px">Every price melts toward $0 by move-out. At $0, students in need get first claim, then a donation truck takes the rest.</p></div>
+        <div class="feed-ctl">
+          <select id="sort" aria-label="Sort">${[['fastest', 'Sort: melting fastest'], ['hot', 'Sort: most watched'], ['cheap', 'Sort: price low → high'], ['ending', 'Sort: free soonest'], ['new', 'Sort: newest']].map(([v, l]) => `<option value="${v}" ${ui.sort === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+          <button class="btn ${prefs.riso ? 'on' : ''}" id="riso" title="Two-color risograph photos">Riso</button>
+          <span class="chip ghost" id="src">${market.items[0]?.live ? '● Live catalog · DummyJSON' : 'Seeded catalog'}</span>
+        </div>
+      </div>
+      <div class="fbgrid" id="grid"></div>
+    </section>
+  </div>`;
   root.querySelectorAll('[data-cat]').forEach((b) => (b.onclick = () => { ui.cat = b.dataset.cat; marketView(root); }));
+  root.querySelectorAll('[data-tab]').forEach((b) => (b.onclick = () => { ui.tab = b.dataset.tab; ui.sort = { fast: 'fastest', free: 'ending', watching: 'hot', browse: ui.sort }[ui.tab]; marketView(root); }));
   $('#q', root).oninput = (e) => { ui.q = e.target.value.toLowerCase(); drawGrid(); };
   $('#dorm', root).onchange = (e) => { ui.dorm = e.target.value; drawGrid(); };
   $('#sort', root).onchange = (e) => { ui.sort = e.target.value; drawGrid(); };
+  $('#riso', root).onclick = () => { prefs.riso = !prefs.riso; try { localStorage.setItem('melt-riso', prefs.riso ? '1' : '0'); } catch {} marketView(root); };
+  $('#feedTitle', root).textContent = { browse: ui.cat === 'all' ? "Today's picks" : CATS.find((c) => c[0] === ui.cat)[1], fast: 'Melting fast', free: 'Free now · Kindness Window', watching: 'Most watched' }[ui.tab];
   const grid = $('#grid', root);
   function drawGrid() {
-    let L = market.list().filter((i) => (ui.cat === 'all' || i.category === ui.cat) && (ui.dorm === 'all' || i.dorm === ui.dorm) && (!ui.q || i.name.toLowerCase().includes(ui.q)));
-    const live = (i) => i.status === STATUS.MELTING;
-    const key = { fastest: (i) => -(1 - i.price / i.p0), hot: (i) => -i.heat, cheap: (i) => i.price, ending: (i) => i.hoursLeft }[ui.sort];
+    let L = market.list().filter((i) => (ui.cat === 'all' || i.category === ui.cat) && (ui.dorm === 'all' || i.dorm === ui.dorm) && (!ui.q || (i.name + ' ' + (i.brand || '')).toLowerCase().includes(ui.q)));
+    if (ui.tab === 'free') L = L.filter((i) => ['free', 'kindness'].includes(i.status));
+    const live = (i) => i.status === STATUS.MELTING || i.status === STATUS.FREE || i.status === STATUS.KINDNESS;
+    const key = { fastest: (i) => -(1 - i.price / i.p0), hot: (i) => -i.heat, cheap: (i) => i.price, ending: (i) => i.hoursLeft, new: (i) => i.t }[ui.sort];
     L.sort((a, b) => (live(b) - live(a)) || key(a) - key(b));
-    grid.innerHTML = L.map(card).join('') || `<p class="pad">Nothing matches. Everything here melts eventually, so check back.</p>`;
+    grid.innerHTML = L.map(card).join('') || `<p class="pad">Nothing here right now. Everything melts eventually, so check back.</p>`;
   }
   drawGrid(); update();
   function update() {
     const im = market.impact();
-    $('#h-kg', root).textContent = Math.round(im.kg).toLocaleString(); $('#h-co2', root).textContent = Math.round(im.co2).toLocaleString(); $('#h-live', root).textContent = im.live;
+    $('#h-kg', root).textContent = Math.round(im.kg).toLocaleString(); $('#h-co2', root).textContent = Math.round(im.co2).toLocaleString();
     for (const el of grid.children) {
       const it = market.get(el.dataset.id); if (!it) continue; const v = market.view(it);
       if (el.dataset.status !== v.status) { el.replaceWith(h(card(v))); continue; }
       if (v.status !== STATUS.MELTING) continue;
       el.querySelector('.price').innerHTML = money(v.price);
       el.querySelector('.off').textContent = `−${Math.round((1 - v.price / v.p0) * 100)}%`;
-      el.querySelector('.cellsw').innerHTML = cells(v.price / v.p0);
+      el.querySelector('.cellsw').innerHTML = cells(v.price / v.p0, 20);
       el.querySelector('.left').textContent = `$0 in ${dur(v.hoursLeft)}`;
-      el.querySelector('.heat').textContent = `◉ ${v.watchers} watching`;
-      el.querySelector('.melt-mask').style.height = `${(1 - v.price / v.p0) * 100}%`;
+      el.querySelector('.heat').textContent = `${v.watchers} watching`;
     }
   }
   return { update };
 }
 function card(v) {
-  const gone = v.status !== STATUS.MELTING, pct = Math.round((1 - v.price / v.p0) * 100);
-  const stamp = { sold: `Sold · ${money(v.soldAt ?? 0, false)}`, claimed: 'Claimed · free', kindness: 'Kindness window', free: 'Free · claim it', donation: '→ Donation truck', picked: 'Donated' }[v.status];
-  return `<a class="card ${gone && !['free', 'kindness'].includes(v.status) ? 'gone' : ''}" href="#/item/${v.id}" data-id="${v.id}" data-status="${v.status}">
-    <div class="art">${glyph(v.glyph, { label: v.name })}<div class="melt-mask" style="height:${pct}%"></div>
-      <div class="tags"><span class="chip ${gone ? 'solid' : ''}">${STATUS_LABEL[v.status]}</span><span class="chip ghost heat">◉ ${v.watchers} watching</span></div>
-      ${stamp ? `<div class="stamp">${stamp}</div>` : ''}</div>
-    <div class="body">
-      <div class="meta">${dormName(v.dorm)} · ${v.seller} · ${v.condition}</div>
-      <div class="name">${v.name}</div>
-      <div class="priceRow"><span class="price">${money(gone ? (v.soldAt ?? 0) : v.price)}</span><span class="was">$${v.p0}</span><span class="off">−${pct}%</span></div>
-      <div class="cellsw">${cells(gone ? 0 : v.price / v.p0)}</div>
-      <div class="foot"><span class="left">${gone ? STATUS_LABEL[v.status] : `$0 in ${dur(v.hoursLeft)}`}</span><span>${v.temperament}</span></div>
+  const melting = v.status === STATUS.MELTING, pct = Math.round((1 - v.price / v.p0) * 100);
+  const badge = { sold: `Sold · ${money(v.soldAt ?? 0, false)}`, claimed: 'Claimed', kindness: 'Kindness window', free: 'Free', donation: 'Donation truck', picked: 'Donated' }[v.status];
+  const price = melting ? money(v.price) : ['free', 'kindness'].includes(v.status) ? 'Free' : money(v.soldAt ?? 0);
+  return `<a class="fbcard ${!melting && !['free', 'kindness'].includes(v.status) ? 'gone' : ''}" href="#/item/${v.id}" data-id="${v.id}" data-status="${v.status}">
+    <div class="pic">${art(v)}${badge ? `<span class="badge">${badge}</span>` : `<span class="badge ghost heat">${v.watchers} watching</span>`}</div>
+    <div class="fbbody">
+      <div class="priceRow"><span class="price">${price}</span>${melting ? `<span class="was">$${v.p0}</span><span class="off">−${pct}%</span>` : ''}</div>
+      <div class="ttl">${v.name}</div>
+      <div class="loc">${dormName(v.dorm)} · ${v.seller}</div>
+      ${melting ? `<div class="cellsw">${cells(v.price / v.p0, 20)}</div><div class="foot"><span class="left">$0 in ${dur(v.hoursLeft)}</span><span>${v.temperament}</span></div>` : ''}
     </div></a>`;
 }
 
@@ -119,11 +138,16 @@ function itemView(root, id) {
   <div class="topbar"><a class="cap" href="#/market">← Market</a><span class="cap-sm">Listing ${it.id.toUpperCase()} · ${dormName(it.dorm)}</span></div>
   <div class="item">
     <div class="left">
-      <div class="art">${glyph(it.glyph, { pitch: 3.6, label: it.name })}<div class="tags" style="position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between"><span class="chip" id="st"></span><span class="chip ghost" id="hw"></span></div></div>
+      <div class="art">${art(it, 'big')}<div class="tags" style="position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between"><span class="chip" id="st"></span><span class="chip ghost" id="hw"></span></div></div>
       <div class="item-sec sec" style="padding:20px 22px">
-        <span class="cap-sm">${it.category} · ${it.condition} · ${it.temperament} melt</span>
-        <h1 class="h-1" style="margin:12px 0 10px">${it.name}</h1>
-        <p style="font-size:17px;max-width:46ch"><em>"${it.blurb}"</em> · ${it.seller}</p>
+        ${it.images?.length > 1 ? `<div class="thumbs">${it.images.map((src, i) => `<button data-src="${src}" class="${i ? '' : 'on'}"><img src="${src}" alt="" referrerpolicy="no-referrer"></button>`).join('')}</div>` : ''}
+        <span class="cap-sm">${it.category}${it.brand ? ' · ' + it.brand : ''} · ${it.temperament} melt</span>
+        <h1 class="h-1" style="margin:12px 0 8px">${it.name}</h1>
+        <p class="mono" style="font-size:12px">Listed ${ago(Math.max(0.2, market.now - it.listedAt))} in ${dormName(it.dorm)}</p>
+        <div class="details"><div><span class="cap-sm">Condition</span><span>${it.condition}</span></div><div><span class="cap-sm">Pick-up</span><span>${dormName(it.dorm)} lobby</span></div>${it.retail ? `<div><span class="cap-sm">Retail new</span><span>$${Math.round(it.retail)}</span></div>` : ''}${it.rating ? `<div><span class="cap-sm">Rating</span><span>${it.rating.toFixed(1)} / 5</span></div>` : ''}</div>
+        <p style="font-size:16px;max-width:52ch;margin-top:12px">${it.blurb}</p>
+        <div class="seller"><span class="av">${it.seller[0]}</span><div><b>${it.seller}</b><span class="mono dim" style="font-size:11px;display:block;margin-top:4px">Verified student · ${dormName(it.dorm)} · replies in ~1h</span></div><span class="chip ghost">${3 + (it.id.charCodeAt(3) % 9)} items melting</span></div>
+        <form class="msg" onsubmit="return false"><span class="cap-sm">Send seller a message</span><div style="display:flex;gap:8px;margin-top:8px"><input value="Hi ${it.seller}, is this still available?" aria-label="Message"><button class="btn solid" type="submit">Send</button></div></form>
       </div>
       <div class="sec" style="padding:0 22px 20px"><div class="kv">
         <div><span class="cap-sm">Weight</span><span class="num">${it.kg}<small class="mono" style="font-size:12px"> kg</small></span></div>
@@ -154,6 +178,8 @@ function itemView(root, id) {
     </div>
   </div>`;
   $('#val', root).oninput = (e) => { value = +e.target.value; update(); };
+  root.querySelectorAll('.thumbs button').forEach((b) => (b.onclick = () => { root.querySelector('.photo.big img').src = b.dataset.src; root.querySelectorAll('.thumbs button').forEach((x) => x.classList.toggle('on', x === b)); }));
+  root.querySelector('.msg').onsubmit = (e) => { e.preventDefault(); toast(`Sent to ${it.seller}. Remember: the price keeps melting while you chat.`); };
   $('#watch', root).onclick = () => { market.watch(id); const b = $('#watch', root); b.classList.add('flash'); setTimeout(() => b.classList.remove('flash'), 900); toast('You\'re watching. Heat slows the melt for everyone.'); update(true); };
   $('#claim', root).onclick = () => { const r = market.claim(id, 'you'); toast(r.ok ? `Claimed for ${money(r.price, false)}. Pick-up at ${dormName(it.dorm)}.` : 'Too late. Someone caught it.'); update(true); };
   let lastChart = 0;
@@ -263,3 +289,4 @@ function simbar() {
   $('#jump').onclick = () => { market.advance(Math.max(0, MOVE_OUT + 3 - market.now)); renderTicker(); route(); toast('Move-out happened. See what transformed, and what was routed to donation.'); };
 }
 simbar(); route(); requestAnimationFrame(loop);
+if (!new URLSearchParams(location.search).has('seeded')) fetchLiveCatalog().then((p) => { if (p.length) { const n = applyCatalog(market, p); renderTicker(); route(); toast(`Live catalog: ${n} real products loaded`); } }).catch(() => {});

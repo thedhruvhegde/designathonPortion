@@ -198,3 +198,72 @@ body.bare main.page{padding-bottom:40px}
   .bigprice{font-size:84px}
   html,body{overflow-x:hidden}
 }
+
+/* ── Marketplace layout (Facebook-Marketplace-like, in Cobalt) ── */
+main.page.fb{max-width:none;padding:0 0 90px}
+.fbwrap{display:grid;grid-template-columns:320px minmax(0,1fr);min-height:calc(100vh - 150px)}
+.fbwrap .side{position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:22px 18px 120px;border-right:1.5px solid var(--ink);background:var(--paper);display:flex;flex-direction:column;gap:16px}
+.side-h{display:flex;flex-direction:column;gap:6px}
+.side-nav{display:flex;flex-direction:column;gap:2px}
+.side-nav button{display:flex;align-items:center;gap:12px;padding:8px 8px;text-align:left;font:500 15px/1.2 var(--f-body);border:1px solid transparent}
+.side-nav button:hover{background:var(--paper-2)}
+.side-nav button.on{background:var(--ink);color:var(--paper)}
+.side-nav .ico{width:34px;height:34px;flex:none;display:grid;place-items:center;background:var(--paper-2);border:1px solid var(--ink-faint)}
+.side-nav button.on .ico{background:var(--paper);color:var(--ink)}
+.side-nav .ico svg{width:24px;height:24px}
+.side-sec{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--ink-faint);padding-top:14px}
+.impact-mini{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.impact-mini > div{display:flex;flex-direction:column;gap:6px}
+.impact-mini .num{font-size:34px;line-height:1}
+.feed{padding:22px clamp(16px,2.4vw,40px)}
+.feed-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.feed-ctl{display:flex;gap:8px;align-items:center}
+.feed-ctl select{width:auto;padding:9px 30px 9px 10px;font-size:13px}
+.fbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:22px 14px}
+.fbcard{display:flex;flex-direction:column;gap:8px;color:var(--ink)}
+.fbcard .pic{position:relative;aspect-ratio:1;border:1px solid var(--ink-faint);overflow:hidden;background:#fff}
+.fbcard:hover .pic{border-color:var(--ink)}
+.fbcard .badge{position:absolute;left:8px;top:8px;background:var(--ink);color:var(--paper);font:600 10px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;padding:6px 8px}
+.fbcard .badge.ghost{background:var(--paper);color:var(--ink);border:1px solid var(--ink-faint)}
+.fbbody{display:flex;flex-direction:column;gap:5px;padding:0 2px}
+.fbbody .priceRow{display:flex;align-items:baseline;gap:8px}
+.fbbody .price{font:600 19px/1.1 var(--f-body);font-variant-numeric:tabular-nums}
+.fbbody .price sup{font-size:.62em;vertical-align:.45em}
+.fbbody .was{font:400 12px/1 var(--f-mono);text-decoration:line-through;opacity:.55}
+.fbbody .off{font:400 12px/1 var(--f-mono);margin-left:auto}
+.fbbody .ttl{font:400 15px/1.3 var(--f-body);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fbbody .loc{font:400 13px/1.2 var(--f-body);opacity:.65}
+.fbbody .cells{height:6px;margin-top:2px}
+.fbbody .foot{display:flex;justify-content:space-between;font:400 11px/1 var(--f-mono);letter-spacing:.04em;text-transform:uppercase;opacity:.8}
+.fbcard.gone .pic img,.fbcard.gone .pic svg{opacity:.35;filter:grayscale(1)}
+.fbcard.gone .ttl,.fbcard.gone .price{opacity:.5}
+
+/* photos: natural by default; riso = cream+cobalt duotone */
+.photo{position:absolute;inset:0;display:grid;place-items:center;background:#fff}
+.photo img{width:100%;height:100%;object-fit:contain;display:block}
+.photo.glyphy{background:var(--paper-2)} .photo.glyphy svg{width:62%}
+.photo.riso{background:var(--ink);isolation:isolate}
+.photo.riso img{filter:grayscale(1) contrast(1.15) brightness(1.05);mix-blend-mode:screen}
+.photo.riso::after{content:"";position:absolute;inset:0;background:var(--paper);mix-blend-mode:multiply;pointer-events:none}
+.item .left .art .photo.big{position:absolute;inset:0}
+.item .left .art .photo.big img{object-fit:contain;padding:4%}
+.thumbs{display:flex;gap:8px;margin-bottom:14px}
+.thumbs button{width:64px;height:64px;border:1px solid var(--ink-faint);background:#fff;padding:0;overflow:hidden}
+.thumbs button.on{border:1.5px solid var(--ink)}
+.thumbs img{width:100%;height:100%;object-fit:contain}
+.details{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 18px;margin-top:14px;border-top:1px solid var(--ink-faint);padding-top:12px}
+.details > div{display:flex;flex-direction:column;gap:4px;font-size:15px}
+.seller{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;margin-top:16px;border-top:1px solid var(--ink-faint);padding-top:14px}
+.seller .av{width:44px;height:44px;display:grid;place-items:center;background:var(--ink);color:var(--paper);font:400 22px/1 var(--f-display)}
+.msg{margin-top:14px}
+.msg input{padding:10px 12px;font-size:14px}
+@media (max-width:900px){
+  .fbwrap{grid-template-columns:1fr}
+  .fbwrap .side{position:static;max-height:none;border-right:0;border-bottom:1.5px solid var(--ink);padding-bottom:18px}
+  .fbwrap .side .side-sec:not(.impact-mini){display:none}
+  .fbgrid{grid-template-columns:repeat(2,1fr);gap:16px 10px}
+}
+.photo{overflow:hidden}
+.item .left .art{overflow:hidden}
+.photo img{max-height:100%;min-height:0}
+.photo{grid-template-rows:100%;grid-template-columns:100%}
