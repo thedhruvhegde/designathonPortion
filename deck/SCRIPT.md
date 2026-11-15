@@ -111,3 +111,31 @@ Every move-out is an ending. Melt makes it a beginning, for the next student. Th
 - Maya and the 40-yard dumpster are an **illustrative composite**.
 - Slide 13 is a **pilot projection**, and every assumption is shown on the slide. Emission factor: 2.1 kgCO₂e/kg (est.), in the style of WARM, taken from `melt/engine`.
 - Slide 14's prices are **pricing hypotheses (est.)**.
+
+---
+
+## PowerPoint version (`deck/Melt.pptx`)
+
+A 17-slide, 16:9 PowerPoint build of this pitch, with speaker notes on every slide (target time and the script). It adds two business slides from `melt/BUSINESS.md` and uses Quince product photos and real screenshots. The live site is https://meltshopping.vercel.app (phones join at `/join`, projector at `/live`).
+
+| # | Slide | Target | Ends at |
+|---|---|---|---|
+| 01 | Cover: Melt. | 0:10 | 0:10 |
+| 02 | Two students, one hallway | 0:18 | 0:28 |
+| 03 | The dumpster is on the calendar | 0:16 | 0:44 |
+| 04 | The need is in the same building | 0:14 | 0:58 |
+| 05 | A permanent listing rots; a melting one moves | 0:14 | 1:12 |
+| 06 | Four states, one ending | 0:15 | 1:27 |
+| 07 | A market where every tile melts | 0:12 | 1:39 |
+| 08 | One item, one public curve | 0:13 | 1:52 |
+| 09 | Three temperaments, one deadline | 0:15 | 2:07 |
+| 10 | At $0: fairness, then a truck | 0:14 | 2:21 |
+| 11 | Who sells, who buys, who pays | 0:20 | 2:41 |
+| 12 | How everyone makes money | 0:20 | 3:01 |
+| 13 | What one spring diverts | 0:13 | 3:14 |
+| 14 | Live demo | 0:25 | 3:39 |
+| 15 | Scan to bid (live auction) | 1:00 | 4:39 |
+| 16 | Why now, and what we need | 0:11 | 4:50 |
+| 17 | An ending that becomes a beginning | 0:10 | 5:00 |
+
+To rebuild after the screenshots change, run `NODE_PATH=<node_modules with pptxgenjs and sharp> node deck/build-pptx.cjs [pptx-skill-dir]`. The script reads `deck/assets/*.png` and `melt/web/img/quince/*.jpg` and resizes them as it builds. The skill directory is optional; it applies the Cobalt theme colours.

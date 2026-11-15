@@ -432,7 +432,7 @@ const meltP = (p0, k, T, t) => p0 * (Math.exp(-k * t) - Math.exp(-k * T)) / (1 -
     s.addText([{ text: "≈ $26k", options: { fontSize: 66 } }], { x: rx, y: 2.2, w: rw, h: 1.05, isTextBox: true, margin: 0, fontFace: SERIF, color: INK, valign: "bottom" });
     T(s, { text: "per campus per year. Marginal cost: hosting, plus a truck day the university already runs.", opts: { x: rx, y: 3.35, w: rw, h: 0.6, fontSize: 13 } });
     s.addChart(pres.charts.BAR, [{ name: "$", labels: ["License", "Delivery & holds", "Sale fees"], values: [12000, 7800, 6600] }], {
-      x: rx - 0.1, y: 3.95, w: rw + 0.1, h: 1.55, barDir: "bar", chartColors: [INK], showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: '"$"#,##0',
+      x: rx - 0.1, y: 3.95, w: rw + 0.1, h: 1.55, barDir: "bar", chartColors: [INK], showValue: true, dataLabelPosition: "outEnd", dataLabelFormatCode: '"$"0.0,"k"',
       dataLabelColor: INK, dataLabelFontSize: 11, dataLabelFontFace: "+mn-lt", catAxisLabelColor: INK, catAxisLabelFontSize: 11, catAxisLabelFontFace: "+mn-lt",
       valAxisHidden: true, valGridLine: { style: "none" }, catGridLine: { style: "none" }, catAxisLineColor: INK, showLegend: false, barGapWidthPct: 40,
       valAxisMaxVal: 18500, catAxisOrientation: "maxMin", plotArea: { fill: { color: PAPER } }, chartArea: { fill: { color: PAPER } },
@@ -456,9 +456,9 @@ const meltP = (p0, k, T, t) => p0 * (Math.exp(-k * t) - Math.exp(-k * T)) / (1 -
     });
     const st = [["34,200 kg", "diverted from landfill"], ["72 t", "CO₂e avoided · est."], ["$90,450", "kept in student pockets"]];
     st.forEach(([n, l], i) => {
-      const x = 5.4 + i * 2.55;
-      bigStat(s, n, x, 1.95, 2.45, 28);
-      label(s, l, x, 2.45, 2.45, { fontSize: 9 });
+      const x = [5.4, 8.3, 10.45][i], w = [2.7, 2.0, 2.38][i];
+      bigStat(s, n, x, 1.95, w, 28);
+      label(s, l, x, 2.45, w, { fontSize: 9 });
     });
     rule(s, 5.4, 2.95, 7.43);
     s.addChart(pres.charts.BAR, [{ name: "kg", labels: ["Sold", "Kindness Window", "Donated", "Landfill"], values: [19800, 7200, 7200, 1800] }], {
@@ -507,7 +507,7 @@ const meltP = (p0, k, T, t) => p0 * (Math.exp(-k * t) - Math.exp(-k * T)) / (1 -
   // ============ 16 WHY NOW / ASK ============
   {
     const s = add("The ask", "CONTENT", "12 · THE ASK · PILOT, SPRING 2027 MOVE-OUT", "Why now, and what we need",
-      "[0:13 · ends 4:52]\nWhy now? The need is measured, diversion is reported, and move-out already happens on a known date.\nAnd the same engine works anywhere there's a hard deadline and too much stuff.\nOur ask: one residence hall, one May. Let us melt it.");
+      "[0:11 · ends 4:50]\nWhy now? The need is measured, diversion is reported, and move-out already happens on a known date.\nAnd the same engine works anywhere there's a hard deadline and too much stuff.\nOur ask: one residence hall, one May. Let us melt it.");
     const r = [["01", "The need is measured", "Basic-needs surveys now quantify who goes without: 59% in the Hope Center's latest."],
       ["02", "Diversion is reported", "Campuses publish waste numbers and run heroic move-out drives. They need a system, not a scramble."],
       ["03", "The deadline exists", "Move-out is on the calendar every year. T is free infrastructure."]];
