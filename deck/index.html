@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..500;1,6..72,400..500&family=Hanken+Grotesk:wght@400..700&family=DM+Mono:wght@400..500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/cobalt.css">
-<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="../shared/vendor/qrcode.js"></script>
 <script src="../shared/cobalt.js"></script>
 <style>
   html,body{height:100%;overflow:hidden}
@@ -17,7 +17,7 @@
   .slide.active{opacity:1;pointer-events:auto}
   .slide::before,.slide::after{content:"";position:absolute;left:var(--edge);right:var(--edge);height:1.5px;background:var(--ink);z-index:5}
   .slide::before{top:2.6vh} .slide::after{bottom:clamp(20px,2vh,32px)}
-  .pagenum{position:absolute;right:var(--edge);bottom:clamp(48px,4.8vh,76px);z-index:5}
+  .pagenum{position:absolute;right:var(--edge);bottom:clamp(48px,4.8vh,76px);z-index:6;background:var(--paper);padding:4px 6px}
   .nav-hint{position:fixed;left:var(--edge);bottom:clamp(48px,4.8vh,76px);opacity:.4;z-index:6}
   .frame{position:absolute;inset:var(--pad-top) var(--edge) var(--pad-bottom);display:flex;flex-direction:column;gap:var(--gap-md);z-index:2}
   .glitch{position:absolute;top:0;bottom:0;z-index:3;pointer-events:none}
@@ -205,6 +205,7 @@
   function drawCurve(){const c=document.getElementById('curve'),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.scale(d,d);x.clearRect(0,0,w,h);
     const ink=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
     [[1,1],[2,.55],[4,.3]].forEach(([th,a])=>{x.beginPath();x.strokeStyle=ink;x.globalAlpha=a;x.lineWidth=1.5;for(let px=0;px<=w;px++){const t=px/w*8,y=h-(h-8)*Math.pow(2,-t/th);px?x.lineTo(px,y):x.moveTo(px,y)}x.stroke()});x.globalAlpha=1}
+  addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1))-1; if(n!==i&&n>=0) go(n)});
   const start=parseInt(location.hash.slice(1))-1; document.addEventListener('DOMContentLoaded',()=>{Cobalt.hydrate(); if(start>0) go(start)});
 </script>
 </body>
