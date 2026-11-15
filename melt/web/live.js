@@ -97,12 +97,12 @@ export function liveView(root) {
     $('#next', root).textContent = v.phase === 'done' ? 'Done' : idx < 0 ? 'Start lot 1 →' : v.phase === 'running' ? 'Melting…' : idx + 1 < v.lots.length ? `Next: lot ${idx + 2} →` : 'Finish →';
     $('#next', root).disabled = v.phase === 'running' || v.phase === 'done';
     if (L) {
-      if ($('#art', root).dataset.g !== L.id) { $('#art', root).dataset.g = L.id; $('#art', root).innerHTML = `<div style="width:66%">${glyph(L.glyph, { pitch: 3.4 })}</div>`; }
+      if ($('#art', root).dataset.g !== L.id) { $('#art', root).dataset.g = L.id; $('#art', root).innerHTML = L.image ? `<div class="liveimg"><img src="${L.image}" alt=""></div>` : `<div style="width:66%">${glyph(L.glyph, { pitch: 3.4 })}</div>`; }
       $('#lotno', root).textContent = `Lot ${idx + 1} of ${v.lots.length} · list price $${L.p0}`; $('#lotname', root).textContent = L.name; $('#story', root).innerHTML = `<em>${L.story}</em>`;
       const r = L.result;
       $('#status', root).textContent = r?.type === 'sold' ? `SOLD to ${r.to} at ${money(r.price, false)}, ${Math.round((1 - r.price / L.p0) * 100)}% melted, at ${r.atSec}s` : r?.type === 'donated' ? 'Melted to $0 → Kindness Window → donation truck. Not the dumpster.' : (Date.now() + offset < v.startAt ? 'Get ready…' : 'Melting. First tap wins.');
     }
-    $('#lots', root).innerHTML = v.lots.map((l, i) => `<div class="${i === idx ? 'cur' : ''}"><div style="display:flex;justify-content:space-between;align-items:center"><span class="mono" style="font-size:11px">LOT ${i + 1}</span><span style="width:34px">${glyph(l.glyph)}</span></div><span style="font-family:var(--f-display);font-size:16px;line-height:1.1">${l.name.split(',')[0]}</span><span class="mono" style="font-size:11px">${l.result ? (l.result.type === 'sold' ? `SOLD ${money(l.result.price, false)} · ${l.result.to}` : '$0 → DONATED') : `$${l.p0}`}</span></div>`).join('');
+    $('#lots', root).innerHTML = v.lots.map((l, i) => `<div class="${i === idx ? 'cur' : ''}"><div style="display:flex;justify-content:space-between;align-items:center"><span class="mono" style="font-size:11px">LOT ${i + 1}</span><span style="width:34px;height:42px;overflow:hidden">${l.image ? `<img src="${l.image}" alt="" style="width:100%;height:100%;object-fit:cover">` : glyph(l.glyph)}</span></div><span style="font-family:var(--f-display);font-size:16px;line-height:1.1">${l.name.split(',')[0]}</span><span class="mono" style="font-size:11px">${l.result ? (l.result.type === 'sold' ? `SOLD ${money(l.result.price, false)} · ${l.result.to}` : '$0 → DONATED') : `$${l.p0}`}</span></div>`).join('');
     $('#lb', root).innerHTML = v.leaderboard.length ? v.leaderboard.map((p, i) => `<div class="row" style="grid-template-columns:28px 1fr auto"><span class="mono">${i + 1}</span><span>${p.name}</span><span class="mono" style="font-size:12px">${p.won} · $${p.saved.toFixed(0)} · $${p.balance.toFixed(0)}</span></div>`).join('') : `<p class="mono dim" style="font-size:12px;padding:8px 0">No wallets yet. Scan the code.</p>`;
     $('#imp', root).innerHTML = [['kg', Math.round(v.impact.kg), 'kg kept'], ['co2', Math.round(v.impact.co2), 'kg CO₂e'], ['kept', '$' + Math.round(v.impact.kept), 'kept in pockets']].map(([, n, l]) => `<div><div class="num" style="font-size:40px;line-height:1">${n}</div><span class="cap-sm">${l}</span></div>`).join('');
     $('#feed', root).innerHTML = v.feed.slice(0, 5).map((f) => `<div class="row" style="grid-template-columns:64px 1fr"><span class="mono" style="font-size:11px">${new Date(f.at).toLocaleTimeString([], { minute: '2-digit', second: '2-digit' })}</span><span style="font-size:13px">${f.text}</span></div>`).join('');
@@ -143,7 +143,7 @@ export function joinView(root) {
       <div style="display:flex;justify-content:space-between;align-items:center"><span class="cap">Hi, ${me.name}</span><span class="mono" style="font-size:11px"><span class="dot"></span> <span id="lv">0</span> LIVE</span></div>
       <div class="notes" id="notes"></div>
       <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="cap-sm">Melt Bucks left</span><span class="num" style="font-size:44px" id="bal"></span></div>
-      <div class="box" style="display:grid;grid-template-columns:96px 1fr;gap:12px;padding:12px;align-items:center"><div id="lg" style="background:var(--paper-2);padding:8px"></div>
+      <div class="box" style="display:grid;grid-template-columns:96px 1fr;gap:12px;padding:12px;align-items:center"><div id="lg" style="background:var(--paper-2)"></div>
         <div><span class="cap-sm" id="ln">Waiting for the host</span><div class="h-3" id="lt" style="margin-top:6px">The first lot starts soon</div></div></div>
       <div class="bigprice" id="pp" style="font-size:96px;text-align:center">—</div>
       <div class="timerbar"><span id="tb" style="width:0"></span></div>
@@ -165,7 +165,7 @@ export function joinView(root) {
     $('#bal', ph).textContent = money(bal, false); $('#lv', ph).textContent = v.live;
     $('#notes', ph).innerHTML = notes(bal).reverse().map((d, i, a) => `<div class="note" style="transform:translate(${(a.length - 1 - i) * 6}px, ${(a.length - 1 - i) * 6}px)"><div style="display:flex;flex-direction:column;justify-content:space-between;position:relative;z-index:1"><span class="cap-sm">Melt Bucks · ${v.room}</span><span class="mono" style="font-size:10px">VALID UNTIL IT MELTS · NO.${String(i + 1).padStart(3, '0')}</span></div><span class="denom" style="position:relative;z-index:1">${d}</span></div>`).join('') || `<div class="note"><span class="cap-sm">Wallet empty</span><span class="denom">0</span></div>`;
     const L = v.lot;
-    if (L) { if ($('#lg', ph).dataset.g !== L.id) { $('#lg', ph).dataset.g = L.id; $('#lg', ph).innerHTML = glyph(L.glyph); }
+    if (L) { if ($('#lg', ph).dataset.g !== L.id) { $('#lg', ph).dataset.g = L.id; $('#lg', ph).innerHTML = L.image ? `<img src="${L.image}" alt="" style="width:100%;aspect-ratio:4/5;object-fit:cover;display:block">` : glyph(L.glyph); }
       $('#ln', ph).textContent = `Lot ${v.lotIndex + 1}/${v.lots.length} · was $${L.p0}`; $('#lt', ph).textContent = L.name; }
     const running = v.phase === 'running' && L && !L.result;
     const p = priceNow(v);
