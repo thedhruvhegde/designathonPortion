@@ -40,7 +40,7 @@ At move-out, students list furniture, mini-fridges and lamps. Every listing's pr
 - **Failure future:** Low liquidity at small schools. Fix by seeding with the RA/res-life inventory.
 
 ## E. Dissolve — worries you write and watch disappear · `disappear`
-A journaling ritual: type the worry, then physically "drop" it into water, fire, or wind. The ink dissolves in a fluid simulation. Nothing is stored. You get only an anonymous count ("14,203 worries let go today"). Backed by Briñol et al. (2012, *Psychological Science*): people who wrote thoughts on paper and threw them away used those thoughts less afterwards.
+A journaling ritual: type the worry, then physically "drop" it into water, fire, or wind. The ink dissolves in a fluid simulation. Nothing is stored. You get only an anonymous count ("14,203 worries let go today"). Backed by Briñol et al. (2013, *Psychological Science*), where writing thoughts on paper and throwing it away reduced how much people used them, and by Kanaya & Kawai (2024, *Scientific Reports*, Nagoya), where anger returned to baseline only when the written note was thrown away or shredded.
 - **Hour 0:** "I'm going to fail orgo" is dropped into water and dissolves in 8 s.
 - **Day 1:** A 30-second nightly ritual. The value is that it's gone.
 - **Week 1:** An optional mood check-in before and after shows self-reported relief.
