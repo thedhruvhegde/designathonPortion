@@ -1,0 +1,75 @@
+/* Cobalt Grid — shared tokens + primitives (deck + demo). See design/cobalt-grid.md */
+:root{
+  --paper:#F0EBDE; --paper-2:#E6E0CE; --ink:#1F2BE0; --ink-soft:#5560E5;
+  --grid:rgba(31,43,224,.10); --ink-faint:rgba(31,43,224,.18);
+  --f-display:"Newsreader","Noto Serif SC",Georgia,serif;
+  --f-body:"Hanken Grotesk","Noto Serif SC",system-ui,sans-serif;
+  --f-mono:"DM Mono",ui-monospace,monospace;
+  --edge:clamp(36px,3.6vw,80px); --edge-inner:clamp(60px,8vw,160px);
+  --pad-top:clamp(76px,8vh,130px); --pad-bottom:clamp(100px,10vh,150px);
+  --gap-lg:clamp(28px,3vw,56px); --gap-md:clamp(20px,2.2vh,36px);
+  --gap-sm:clamp(14px,1.6vh,24px); --gap-xs:clamp(10px,1.2vh,18px);
+  --cell:clamp(28px,2.2vw,44px);
+}
+*{box-sizing:border-box;margin:0;padding:0;border-radius:0}
+html,body{background:var(--paper);color:var(--ink);font-family:var(--f-body);-webkit-font-smoothing:antialiased}
+
+/* grid paper — permanent canvas tone */
+.paper-grid{position:relative;background:var(--paper)}
+.paper-grid::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);
+  background-size:var(--cell) var(--cell)}
+
+/* type */
+.t-vbig{font:400 clamp(110px,min(11vw,18vh),240px)/.92 var(--f-display);letter-spacing:-.015em}
+.t-hero{font:400 clamp(100px,min(11vw,18vh),200px)/.92 var(--f-display);letter-spacing:-.008em}
+.t-closing{font:400 clamp(72px,min(8.4vw,14vh),180px)/.96 var(--f-display);letter-spacing:-.005em}
+.t-chapter{font:400 clamp(56px,min(6vw,10vh),130px)/1 var(--f-display);letter-spacing:-.005em}
+.t-manifesto{font:400 clamp(56px,min(6.4vw,11vh),120px)/1.05 var(--f-display);letter-spacing:-.005em}
+.t-quote{font:400 clamp(50px,min(5.6vw,9vh),110px)/1.05 var(--f-display);letter-spacing:-.005em}
+.t-headline-index{font:400 clamp(48px,min(5vw,8.5vh),100px)/.95 var(--f-display)}
+.t-headline{font:400 clamp(46px,min(4.8vw,8.2vh),92px)/.95 var(--f-display)}
+.t-callout{font:400 clamp(28px,min(2.8vw,4.6vh),50px)/1.1 var(--f-display)}
+.t-row{font:400 clamp(26px,2vw,40px)/1.05 var(--f-display)}
+.t-name{font:400 clamp(20px,1.6vw,28px)/1.15 var(--f-display)}
+.t-micro-strong,.t-micro,.t-micro-sm{font-family:var(--f-body);font-weight:600;line-height:1;text-transform:uppercase}
+.t-micro-strong{font-size:clamp(13px,1vw,16px);letter-spacing:.18em}
+.t-micro{font-size:clamp(12px,.9vw,14px);letter-spacing:.16em}
+.t-micro-sm{font-size:clamp(11px,.75vw,12px);letter-spacing:.18em}
+.t-lede{font:400 clamp(15px,1vw,18px)/1.5 var(--f-body)}
+.t-stat{font:400 clamp(15px,1vw,17px)/1.5 var(--f-body)}
+.t-body{font:400 clamp(14px,.95vw,15px)/1.5 var(--f-body)}
+.t-tag{font:400 clamp(13px,.9vw,15px)/1 var(--f-mono);letter-spacing:.04em}
+.t-tick{font:400 clamp(12px,.85vw,14px)/1 var(--f-mono);letter-spacing:.04em}
+.t-chrome{font:400 clamp(11px,.82vw,13px)/1 var(--f-mono);letter-spacing:.06em}
+em{font-style:italic} .roman{font-style:normal}
+
+/* structure */
+.topbar{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--gap-md);
+  border-bottom:1.5px solid var(--ink);padding-bottom:clamp(12px,1.4vh,22px)}
+.row-div{border-bottom:1px solid var(--ink-faint)}
+.attrib{border-top:1px solid var(--ink);padding-top:clamp(10px,1.2vh,18px)}
+.vstack{font:400 clamp(12px,.85vw,14px)/1 var(--f-mono);letter-spacing:.04em;writing-mode:vertical-rl;text-orientation:mixed}
+.delta-up::before{content:"↑ "} .delta-down::before{content:"↓ ";opacity:.6} .delta-flat::before{content:"— ";opacity:.6}
+
+/* QR block (filled by JS: data-qr="url" for a real code, or data-seed for a mosaic) */
+.qr{display:grid;gap:1.5px;background:var(--paper);padding:4px;box-shadow:0 0 0 1.5px var(--paper);
+  width:clamp(58px,6vw,100px);aspect-ratio:1;position:relative;z-index:4}
+.qr i{background:transparent} .qr i.on{background:var(--ink)}
+.qr.big{width:clamp(180px,22vh,320px);gap:0}
+
+/* pixel-stack bars (filled by JS from data-values) */
+.pstack{display:flex;align-items:flex-end;gap:clamp(10px,1.4vw,26px);height:100%}
+.pstack .bar{flex:1;display:flex;flex-direction:column;align-items:stretch;gap:6px;height:100%;justify-content:flex-end}
+.pstack .cells{display:flex;flex-direction:column-reverse;gap:3px;flex:1}
+.pstack .cells b{flex:1;background:var(--grid)} .pstack .cells b.on{background:var(--ink)}
+.pstack .axis{border-top:1.5px solid var(--ink);padding-top:8px;text-align:center}
+
+/* controls (demo adaptation: ink fill + paper text, 1.5px rules, no radius) */
+.btn{font:600 clamp(11px,.8vw,13px)/1 var(--f-body);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);background:var(--paper);border:1.5px solid var(--ink);padding:10px 14px;cursor:pointer}
+.btn:hover,.btn.on{background:var(--ink);color:var(--paper)}
+.btn:focus-visible,input:focus-visible{outline:1.5px solid var(--ink);outline-offset:3px}
+input[type=range]{accent-color:var(--ink);width:100%}
+input[type=text],textarea{font:400 15px/1.4 var(--f-body);color:var(--ink);background:var(--paper);border:1.5px solid var(--ink);padding:10px 12px;width:100%}
+::placeholder{color:var(--ink-soft);opacity:.7}

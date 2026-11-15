@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Impermanence Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..500;1,6..72,400..500&family=Hanken+Grotesk:wght@400..700&family=DM+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/cobalt.css">
+<style>
+  body{min-height:100vh}
+  .app{display:grid;grid-template-columns:clamp(200px,18vw,280px) 1fr;grid-template-rows:auto 1fr auto;min-height:100vh}
+  header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-end;padding:18px var(--edge) 14px;border-bottom:1.5px solid var(--ink);position:relative;z-index:2;background:var(--paper)}
+  nav{border-right:1.5px solid var(--ink);padding:var(--gap-sm) 0;position:relative;z-index:2;background:var(--paper)}
+  nav button{display:grid;grid-template-columns:40px 1fr;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--ink-faint);padding:14px 18px;color:var(--ink);cursor:pointer}
+  nav button.on{background:var(--ink);color:var(--paper)}
+  main{position:relative;overflow:hidden}
+  main canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+  .panel{position:absolute;top:var(--gap-md);right:var(--gap-md);width:min(360px,40%);background:var(--paper);border:1.5px solid var(--ink);padding:var(--gap-sm);z-index:3;display:flex;flex-direction:column;gap:12px}
+  footer{grid-column:1/-1;display:grid;grid-template-columns:auto auto 1fr auto;gap:var(--gap-sm);align-items:center;padding:12px var(--edge);border-top:1.5px solid var(--ink);background:var(--paper);position:relative;z-index:2}
+  .ticker{white-space:nowrap;overflow:hidden}
+  @media (max-width:760px){.app{grid-template-columns:1fr}nav{display:flex;overflow-x:auto;border-right:0;border-bottom:1.5px solid var(--ink)}nav button{min-width:150px}.panel{left:16px;right:16px;width:auto}main{min-height:70vh}footer{grid-template-columns:1fr 1fr}}
+  /* join mode = phone view for the QR moment */
+  body.join .app{display:none} .joinview{display:none} body.join .joinview{display:flex}
+  .joinview{min-height:100vh;flex-direction:column;justify-content:center;gap:var(--gap-md);padding:24px 16px;position:relative;z-index:2}
+</style>
+</head>
+<body class="paper-grid">
+<div class="app">
+  <header>
+    <div><span class="t-micro">Live demo</span><h1 class="t-callout burner" id="title">[Product Name]</h1></div>
+    <span class="t-chrome" id="clock">T+0s</span>
+  </header>
+  <nav id="nav"></nav>
+  <main><canvas id="cv"></canvas><div class="panel" id="panel"></div></main>
+  <footer>
+    <button class="btn" id="play">Pause</button>
+    <select class="btn" id="speed" aria-label="Simulation speed"><option value="1">1×</option><option value="60" selected>1 min/s</option><option value="3600">1 hr/s</option><option value="86400">1 day/s</option></select>
+    <input type="range" id="scrub" min="0" max="604800" value="0" aria-label="Scrub time (one week)">
+    <span class="t-chrome ticker" id="tick">—</span>
+  </footer>
+</div>
+<div class="joinview">
+  <span class="t-micro-strong">You're in</span>
+  <h1 class="t-chapter burner">[Join prompt]</h1>
+  <textarea rows="4" placeholder="Type something. It won't last." id="joinText"></textarea>
+  <button class="btn on" id="joinSend">Release it</button>
+  <span class="t-chrome">It disappears within 5 minutes · nothing is stored after that</span>
+</div>
+<script type="module">
+  import { SimClock, halfLife, weibull, fmtDuration } from './engine/decay.js';
+  if (new URLSearchParams(location.search).get('mode') === 'join') document.body.classList.add('join');
+
+  // Feature registry: each winning-concept feature plugs in here as { id, name, mount(panel), draw(ctx, t, w, h) }
+  const features = [
+    { id:'F01', name:'Decay field', mount:p=>p.innerHTML=`<span class="t-micro">F01 · Placeholder</span><p class="t-body">Specimens that decay on different half-lives. Swap in the chosen concept.</p>`,
+      draw:(x,t,w,h)=>{ for(let k=0;k<60;k++){const th=3600*(1+(k%6)*4), a=halfLife(t,th); x.globalAlpha=a; x.fillRect((k%10)*w/10+w/40,Math.floor(k/10)*h/6+h/24,w/20*a+2,h/12*a+2)} x.globalAlpha=1 } },
+    { id:'F02', name:'Survival curve', mount:p=>p.innerHTML=`<span class="t-micro">F02 · Weibull S(t)</span><p class="t-body">k = 0.7 / 1 / 2.5</p>`,
+      draw:(x,t,w,h)=>{ [0.7,1,2.5].forEach((k,j)=>{x.globalAlpha=1-j*.3;x.beginPath();for(let px=0;px<w;px++){const tt=px/w*604800,y=h-h*.8*weibull(tt,172800,k)-h*.1;px?x.lineTo(px,y):x.moveTo(px,y)}x.stroke()}); x.globalAlpha=1; const cx=t/604800*w; x.fillRect(cx,0,1.5,h) } },
+  ];
+  const cv=document.getElementById('cv'), ctx=cv.getContext('2d'), nav=document.getElementById('nav'), panel=document.getElementById('panel');
+  let cur=features[0];
+  features.forEach(f=>{const b=document.createElement('button');b.innerHTML=`<span class="t-tag">${f.id}</span><span class="t-micro-sm">${f.name}</span>`;b.onclick=()=>{cur=f;[...nav.children].forEach(c=>c.classList.toggle('on',c===b));f.mount(panel)};nav.appendChild(b)});
+  nav.firstChild.classList.add('on'); cur.mount(panel);
+  const ink=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+  const clock=new SimClock(60), scrub=document.getElementById('scrub');
+  clock.addEventListener('tick',({detail:{t}})=>{
+    const d=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight; if(cv.width!==w*d){cv.width=w*d;cv.height=h*d}
+    ctx.setTransform(d,0,0,d,0,0); ctx.clearRect(0,0,w,h); ctx.fillStyle=ctx.strokeStyle=ink; ctx.lineWidth=1.5;
+    cur.draw(ctx,t,w,h); document.getElementById('clock').textContent='T+'+fmtDuration(t); if(document.activeElement!==scrub) scrub.value=t%604800;
+  });
+  document.getElementById('play').onclick=e=>{clock.running=!clock.running;e.target.textContent=clock.running?'Pause':'Play'};
+  document.getElementById('speed').onchange=e=>clock.speed=+e.target.value;
+  scrub.oninput=e=>clock.seek(+e.target.value);
+  document.getElementById('tick').textContent='Simulation clock · drag to travel up to one week ahead';
+</script>
+</body>
+</html>

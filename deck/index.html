@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Impermanence Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..500;1,6..72,400..500&family=Hanken+Grotesk:wght@400..700&family=DM+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/cobalt.css">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<script src="../shared/cobalt.js"></script>
+<style>
+  html,body{height:100%;overflow:hidden}
+  .deck{position:fixed;inset:0}
+  .stage{position:absolute;inset:0}
+  .slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 280ms ease;z-index:2}
+  .slide.active{opacity:1;pointer-events:auto}
+  .slide::before,.slide::after{content:"";position:absolute;left:var(--edge);right:var(--edge);height:1.5px;background:var(--ink);z-index:5}
+  .slide::before{top:2.6vh} .slide::after{bottom:clamp(20px,2vh,32px)}
+  .pagenum{position:absolute;right:var(--edge);bottom:clamp(48px,4.8vh,76px);z-index:5}
+  .nav-hint{position:fixed;left:var(--edge);bottom:clamp(48px,4.8vh,76px);opacity:.4;z-index:6}
+  .frame{position:absolute;inset:var(--pad-top) var(--edge) var(--pad-bottom);display:flex;flex-direction:column;gap:var(--gap-md);z-index:2}
+  .glitch{position:absolute;top:0;bottom:0;z-index:3;pointer-events:none}
+  .glitch.r{right:0;width:28vw} .glitch.l{left:0;width:24vw} .glitch.sm{width:16vw}
+  .qr-corner{position:absolute;top:calc(2.6vh + 24px);right:var(--edge)}
+  .burner{outline:1px dashed var(--ink-faint);outline-offset:4px}
+  /* layouts */
+  .cover .frame{justify-content:flex-end;max-width:64vw}
+  .index-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);column-gap:var(--gap-lg);flex:1}
+  .index-grid > div{display:grid;grid-template-columns:56px 1fr;gap:var(--gap-sm);padding:var(--gap-sm) 0;border-bottom:1px solid var(--ink-faint)}
+  .ledger{display:flex;flex-direction:column;flex:1}
+  .ledger .lr{display:grid;grid-template-columns:76px .6fr 1.4fr .7fr .5fr;gap:clamp(14px,1.4vw,28px);align-items:center;padding:var(--gap-xs) 0;border-bottom:1px solid var(--ink-faint)}
+  .ledger .lr.head{border-bottom:1.5px solid var(--ink)}
+  .manifesto{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 var(--edge-inner);gap:var(--gap-md);z-index:2}
+  .demo-embed{flex:1;border:1.5px solid var(--ink);background:var(--paper);position:relative}
+  .demo-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .eq{font:400 clamp(28px,3vw,56px)/1.2 var(--f-display);font-style:italic}
+  .split{display:grid;grid-template-columns:1.2fr 1fr;gap:var(--gap-lg);flex:1;align-items:center}
+  .colophon .frame{align-items:flex-end;text-align:right}
+  .credits{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap-lg);text-align:left;width:100%;margin-top:auto}
+  .vstack-col{position:absolute;right:calc(var(--edge) - 6px);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:var(--gap-xs);z-index:4}
+</style>
+</head>
+<body>
+<div class="deck"><div class="stage paper-grid">
+
+<!-- 01 COVER -->
+<section class="slide cover active">
+  <div class="glitch r" data-glitch="cover" data-steps="8"></div>
+  <div class="qr-corner"><div class="qr" data-seed="cover"></div></div>
+  <div class="frame">
+    <span class="t-micro-strong">Designathon 2026 · Impermanence Report</span>
+    <h1 class="t-hero burner">[Product<br>Name]</h1>
+    <p class="t-callout burner"><em>A one-line pitch that names the thing that disappears.</em></p>
+  </div>
+  <span class="pagenum t-chrome">01</span>
+</section>
+
+<!-- 02 MANIFESTO — the prompt -->
+<section class="slide">
+  <div class="manifesto">
+    <p class="t-manifesto"><em>What if the best design was something that <span class="roman">eventually disappeared?</span></em></p>
+    <div class="attrib" style="display:flex;justify-content:space-between"><span class="t-micro">The brief</span><span class="t-chrome">Disappear · Expire · Transform · Decay</span></div>
+  </div>
+  <span class="pagenum t-chrome">02</span>
+</section>
+
+<!-- 03 INDEX — 30 case studies, 6 patterns -->
+<section class="slide">
+  <div class="frame">
+    <div class="topbar"><h2 class="t-headline-index">Six laws of impermanence</h2><span class="t-micro">From 30 case studies</span></div>
+    <div class="index-grid">
+      <div><span class="t-tag">01</span><div><h3 class="t-row">Low stakes, more honesty</h3><p class="t-body">Snapchat, BeReal, Signal. Knowing it ends changes what people share.</p></div></div>
+      <div><span class="t-tag">02</span><div><h3 class="t-row">The ending is an event</h3><p class="t-body">The Temple burn, the sand mandala, Banksy's shredder. People watch it go.</p></div></div>
+      <div><span class="t-tag">03</span><div><h3 class="t-row">A shared clock makes community</h3><p class="t-body">Wordle went from 90 to over 2M players in about 3 months. Hanami, BeReal.</p></div></div>
+      <div><span class="t-tag">04</span><div><h3 class="t-row">Make expiry visible</h3><p class="t-body">The Mimica bump, vaccine vial monitors. Expiry you can see and feel.</p></div></div>
+      <div><span class="t-tag">05</span><div><h3 class="t-row">Turn into something, don't vanish</h3><p class="t-body">Seed paper, kintsugi. An ending into something reads as a gain.</p></div></div>
+      <div><span class="t-tag">06</span><div><h3 class="t-row">Novelty FOMO burns out</h3><p class="t-body">Clubhouse downloads fell 90.6% in two months. Pair "now" with something that lasts.</p></div></div>
+    </div>
+  </div>
+  <span class="pagenum t-chrome">03</span>
+</section>
+
+<!-- 04 DATA — pixel-stack -->
+<section class="slide">
+  <div class="frame">
+    <div class="topbar"><h2 class="t-headline burner">[The problem, in numbers]</h2><span class="t-micro">Source · [cite]</span></div>
+    <div class="split">
+      <div data-values="12,18,25,31,40,52,61,74" data-labels="2019,20,21,22,23,24,25,26" data-cells="14" style="height:52vh"></div>
+      <div><div class="t-vbig burner">74%</div><p class="t-stat burner">Placeholder stat. Replace with the chosen concept's headline number and its source.</p></div>
+    </div>
+  </div>
+  <span class="pagenum t-chrome">04</span>
+</section>
+
+<!-- 05 CHAPTER — the idea -->
+<section class="slide">
+  <div class="glitch r sm" data-glitch="chapter" data-steps="6" data-opacity=".8"></div>
+  <div class="frame" style="justify-content:center;max-width:62vw">
+    <span class="t-micro-strong">Chapter 02 · The proposition</span>
+    <h2 class="t-chapter burner">[What disappears,<br>and why that's the point]</h2>
+    <p class="t-lede burner" style="max-width:46ch">Lead paragraph: who it's for, what it does, and why it would be worse if it were permanent.</p>
+  </div>
+  <span class="pagenum t-chrome">05</span>
+</section>
+
+<!-- 06 MATH -->
+<section class="slide">
+  <div class="frame">
+    <div class="topbar"><h2 class="t-headline">The decay engine</h2><span class="t-micro">Algorithm · 01</span></div>
+    <div class="split">
+      <div style="display:flex;flex-direction:column;gap:var(--gap-md)">
+        <p class="eq">N(t) = N₀ · 2<sup>−t / t½</sup></p>
+        <p class="eq burner">h(t) = (k/λ)(t/λ)<sup>k−1</sup></p>
+        <p class="t-body burner" style="max-width:52ch">Explain each term in plain language. Replace this with the chosen concept's core model.</p>
+      </div>
+      <canvas id="curve" style="width:100%;height:46vh;border-bottom:1.5px solid var(--ink)"></canvas>
+    </div>
+  </div>
+  <span class="pagenum t-chrome">06</span>
+</section>
+
+<!-- 07 LIVE DEMO -->
+<section class="slide">
+  <div class="frame">
+    <div class="topbar"><h2 class="t-headline">Live demo</h2><span class="t-micro">Interactive · Press D to open full screen</span></div>
+    <div class="demo-embed"><iframe src="../demo/index.html" title="Live demo" loading="lazy"></iframe></div>
+  </div>
+  <span class="pagenum t-chrome">07</span>
+</section>
+
+<!-- 08 LEDGER — features -->
+<section class="slide">
+  <div class="frame">
+    <div class="topbar"><h2 class="t-headline">Feature ledger</h2><span class="t-micro">What ships</span></div>
+    <div class="ledger">
+      <div class="lr head t-micro-sm"><span>No.</span><span>Feature</span><span>What it does</span><span>Mechanic</span><span>Impact</span></div>
+      <div class="lr"><span class="t-tag">F01</span><span class="t-name burner">[Feature]</span><span class="t-body burner">One-line description.</span><span class="t-tag">decay</span><span class="t-tag delta-up">high</span></div>
+      <div class="lr"><span class="t-tag">F02</span><span class="t-name burner">[Feature]</span><span class="t-body burner">One-line description.</span><span class="t-tag">expire</span><span class="t-tag delta-up">high</span></div>
+      <div class="lr"><span class="t-tag">F03</span><span class="t-name burner">[Feature]</span><span class="t-body burner">One-line description.</span><span class="t-tag">transform</span><span class="t-tag delta-flat">med</span></div>
+      <div class="lr"><span class="t-tag">F04</span><span class="t-name burner">[Feature]</span><span class="t-body burner">One-line description.</span><span class="t-tag">disappear</span><span class="t-tag delta-flat">med</span></div>
+      <div class="lr"><span class="t-tag">F05</span><span class="t-name burner">[Feature]</span><span class="t-body burner">One-line description.</span><span class="t-tag">decay</span><span class="t-tag delta-down">low</span></div>
+    </div>
+  </div>
+  <span class="pagenum t-chrome">08</span>
+</section>
+
+<!-- 09 QUOTE -->
+<section class="slide">
+  <div class="glitch r sm" data-glitch="quote" data-steps="5" data-opacity=".7"></div>
+  <div class="manifesto" style="padding-right:22vw">
+    <span class="t-micro">Field note</span>
+    <p class="t-quote burner">"[A quote from a user interview or an expert]."</p>
+    <div class="attrib"><span class="t-micro burner">Name · Role</span></div>
+  </div>
+  <span class="pagenum t-chrome">09</span>
+</section>
+
+<!-- 10 JOIN — QR participation -->
+<section class="slide">
+  <div class="frame" style="justify-content:center;align-items:center;text-align:center;gap:var(--gap-lg)">
+    <span class="t-micro-strong">Take out your phone</span>
+    <div class="qr big" id="join-qr"></div>
+    <p class="t-callout"><em>Scan to join. Your contribution will be gone by the end of this pitch.</em></p>
+    <span class="t-tag" id="join-url"></span>
+  </div>
+  <div class="vstack-col"><span class="vstack">LIVE · AUDIENCE</span><span class="vstack">EXPIRES · 05:00</span></div>
+  <span class="pagenum t-chrome">10</span>
+</section>
+
+<!-- 11 COLOPHON -->
+<section class="slide colophon">
+  <div class="glitch l" data-glitch="colophon" data-side="left" data-steps="8"></div>
+  <div class="frame">
+    <span class="t-micro-strong">Fin.</span>
+    <h2 class="t-closing burner">[Closing line<br>that will not last.]</h2>
+    <div class="credits">
+      <div><span class="t-micro-sm">Team</span><p class="t-body burner">Names</p></div>
+      <div><span class="t-micro-sm">Stack</span><p class="t-body">Vanilla JS · Canvas/WebGL · Postgres · Edge functions</p></div>
+      <div><span class="t-micro-sm">Research</span><p class="t-body">30 case studies · 21 concepts · 20-parameter ranking</p></div>
+      <div><span class="t-micro-sm">Type</span><p class="t-body">Newsreader · Hanken Grotesk · DM Mono</p></div>
+    </div>
+  </div>
+  <span class="pagenum t-chrome">11</span>
+</section>
+
+</div></div>
+<span class="nav-hint t-chrome">← → navigate · D demo · F full screen</span>
+<script>
+  const slides=[...document.querySelectorAll('.slide')]; let i=0;
+  const total=String(slides.length).padStart(2,'0');
+  slides.forEach((s,k)=>{const p=s.querySelector('.pagenum'); if(p) p.textContent=`${String(k+1).padStart(2,'0')} / ${total}`});
+  function go(n){slides[i].classList.remove('active'); i=Math.max(0,Math.min(slides.length-1,n)); slides[i].classList.add('active'); try{location.hash=i+1}catch(e){} if(slides[i].querySelector('#curve')) drawCurve();}
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(i+1)}
+    if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(i-1)}
+    if(e.key==='f') document.documentElement.requestFullscreen?.();
+    if(e.key==='d') window.open('../demo/index.html','_blank');
+  });
+  addEventListener('click',e=>{if(e.target.closest('iframe,a,button'))return; go(e.clientX>innerWidth/2?i+1:i-1)});
+  // join QR — set ?join=<url> on the deck URL to point it at the hosted demo
+  const joinUrl=new URLSearchParams(location.search).get('join')||new URL('../demo/index.html?mode=join',location.href).href;
+  const jq=document.getElementById('join-qr'); jq.dataset.qr=joinUrl; document.getElementById('join-url').textContent=joinUrl.replace(/^https?:\/\//,'');
+  // decay curve preview (half-life family)
+  function drawCurve(){const c=document.getElementById('curve'),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.scale(d,d);x.clearRect(0,0,w,h);
+    const ink=getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+    [[1,1],[2,.55],[4,.3]].forEach(([th,a])=>{x.beginPath();x.strokeStyle=ink;x.globalAlpha=a;x.lineWidth=1.5;for(let px=0;px<=w;px++){const t=px/w*8,y=h-(h-8)*Math.pow(2,-t/th);px?x.lineTo(px,y):x.moveTo(px,y)}x.stroke()});x.globalAlpha=1}
+  const start=parseInt(location.hash.slice(1))-1; document.addEventListener('DOMContentLoaded',()=>{Cobalt.hydrate(); if(start>0) go(start)});
+</script>
+</body>
+</html>
