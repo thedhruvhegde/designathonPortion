@@ -189,3 +189,12 @@ svg.map{width:100%;height:auto;background:var(--paper);border:1.5px solid var(--
 footer.sim[hidden]{display:none}
 body.bare main.page{padding-bottom:40px}
 .item h1.h-1{font-size:clamp(34px,3.4vw,58px)}
+@media (max-width:700px){
+  .brand .cap-sm{display:none}
+  footer.sim{flex-wrap:wrap;gap:6px;padding:8px 12px}
+  footer.sim .btn{padding:8px 9px;font-size:10px;letter-spacing:.1em}
+  footer.sim .cap-sm,footer.sim .grow,#simclock{display:none}
+  .card .price{font-size:34px}
+  .bigprice{font-size:84px}
+  html,body{overflow-x:hidden}
+}
