@@ -12,7 +12,7 @@ A plain exponential `p₀e^{−kt}` never reaches zero. We use a **deadline-norm
 $$p(t)=p_0\,\frac{e^{-k\,s(t)}-e^{-k\,T}}{1-e^{-k\,T}},\qquad p(0)=p_0,\;p(T)=0$$
 
 - `k` is the *melt temperament*: k→0 gives a straight line, and a large k gives a fast early drop followed by a long cheap tail.
-- Sellers choose a temperament (Gentle k=0.02, Steady 0.05, Fast 0.12 per hour). The UI previews the curve live.
+- Sellers choose a temperament (Gentle k=0.01, Steady 0.025, Fast 0.05 per hour). The UI previews the curve live.
 - The displayed price is rounded to cents and never increases.
 
 ## 2 · Heat: watching slows the melt

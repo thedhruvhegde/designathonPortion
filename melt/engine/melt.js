@@ -2,7 +2,7 @@
    Time unit: hours. Money: dollars. */
 
 // ── 1 · deadline-normalised melt curve ─────────────────────────────────────
-export const TEMPERAMENTS = { gentle: 0.02, steady: 0.05, fast: 0.12 };
+export const TEMPERAMENTS = { gentle: 0.01, steady: 0.025, fast: 0.05 };
 
 /** p(s) = p0 · (e^{-ks} − e^{-kT}) / (1 − e^{-kT}); exactly p0 at s=0 and 0 at s=T */
 export function meltPrice(p0, k, T, s) {
