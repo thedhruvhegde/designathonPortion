@@ -6,13 +6,15 @@ export const WALLET = 150;          // Melt Bucks per judge
 export const LOT_SECONDS = 40;      // each lot melts to $0 in 40 s
 export const ONLINE_MS = 8000;      // a viewer counts as live if seen in the last 8 s
 
-export const LOTS = [
+import SCRAPED from '../data/lots.js';
+const FALLBACK_LOTS = [
   { id: 'L1', name: 'Grey futon, folds flat', glyph: 'futon', category: 'furniture', p0: 80, kg: 30, story: 'Ava, Maple Quad: "It held four years of movie nights."' },
   { id: 'L2', name: 'Mini-fridge 3.1 cu ft', glyph: 'fridge', category: 'appliance', p0: 70, kg: 22, story: 'Jun, Elm Court: "Cleaned and still cold."' },
   { id: 'L3', name: 'Commuter bike, 21-speed', glyph: 'bike', category: 'bike', p0: 120, kg: 14, story: 'Priya, North Hall: "New tubes in March."' },
   { id: 'L4', name: 'Winter parka, M', glyph: 'parka', category: 'clothing', p0: 60, kg: 1.6, story: 'Mateo, Riverside: "For someone\'s first snow."' },
   { id: 'L5', name: '27" monitor', glyph: 'monitor', category: 'electronics', p0: 90, kg: 5.5, story: 'Zainab, Oak House: "My thesis lived on this."' },
 ];
+export const LOTS = SCRAPED?.length ? SCRAPED : FALLBACK_LOTS;
 
 export function fresh(room = 'main') {
   return { v: 0, room, lots: LOTS.map((l) => ({ ...l, result: null })), lotIndex: -1, phase: 'lobby', startAt: 0, players: {}, spectators: {}, feed: [] };
@@ -33,7 +35,7 @@ export function view(s, now = Date.now()) {
   return {
     room: s.room, phase: s.phase, lotIndex: s.lotIndex, serverNow: now, startAt: s.startAt, lotSeconds: LOT_SECONDS,
     lot: lot && { ...lot, price: s.phase === 'running' ? lotPrice(lot, s.startAt, now) : lot.result?.price ?? lot.p0, elapsed },
-    lots: s.lots.map((l) => ({ id: l.id, name: l.name, glyph: l.glyph, p0: l.p0, result: l.result })),
+    lots: s.lots.map((l) => ({ id: l.id, name: l.name, glyph: l.glyph, image: l.image, p0: l.p0, result: l.result })),
     live, players: players.length,
     leaderboard: players.map((p) => ({ name: p.name, balance: p.balance, won: p.won.length, saved: p.won.reduce((a, w) => a + (w.p0 - w.price), 0) })).sort((a, b) => b.won - a.won || b.saved - a.saved).slice(0, 8),
     feed: s.feed.slice(0, 12),

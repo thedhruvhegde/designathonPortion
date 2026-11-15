@@ -8,6 +8,12 @@ const SOURCES = [
 const GLYPH = { furniture: 'chair', decor: 'lamp', kitchen: 'kettle', electronics: 'monitor', clothing: 'parka', bike: 'bike' };
 const BIG = /bed|sofa|couch|table|wardrobe|desk|cabinet/i;
 
+/** Local scraped catalog (data/quince.json, built by scripts/scrape-quince.mjs). Preferred: works offline and on Vercel. */
+export async function fetchLocalCatalog() {
+  const r = await fetch('../data/quince.json', { cache: 'no-cache' }); if (!r.ok) return [];
+  return (await r.json()).map((p) => ({ ...p, featured: true }));
+}
+
 export async function fetchLiveCatalog(timeoutMs = 5000) {
   const ctl = new AbortController(); const timer = setTimeout(() => ctl.abort(), timeoutMs);
   try {

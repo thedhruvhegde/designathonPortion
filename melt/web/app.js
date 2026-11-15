@@ -6,7 +6,7 @@ import { glyph } from './glyphs.js';
 import * as C from './charts.js';
 import { kindnessView, routesView, impactView } from './panels.js';
 import { liveView, joinView } from './live.js';
-import { fetchLiveCatalog, applyCatalog } from './catalog-live.js';
+import { fetchLiveCatalog, fetchLocalCatalog, applyCatalog } from './catalog-live.js';
 
 export const MOVE_OUT = 84; // market hour of the hard move-out deadline
 export const market = new Market({ seed: 42, now: 30 });
@@ -289,4 +289,8 @@ function simbar() {
   $('#jump').onclick = () => { market.advance(Math.max(0, MOVE_OUT + 3 - market.now)); renderTicker(); route(); toast('Move-out happened. See what transformed, and what was routed to donation.'); };
 }
 simbar(); route(); requestAnimationFrame(loop);
-if (!new URLSearchParams(location.search).has('seeded')) fetchLiveCatalog().then((p) => { if (p.length) { const n = applyCatalog(market, p); renderTicker(); route(); toast(`Live catalog: ${n} real products loaded`); } }).catch(() => {});
+if (!new URLSearchParams(location.search).has('seeded')) (async () => {
+  let p = await fetchLocalCatalog().catch(() => []), src = 'Quince';
+  if (!p.length) { p = await fetchLiveCatalog().catch(() => []); src = 'DummyJSON'; }
+  if (p.length) { const n = applyCatalog(market, p); market.catalogSource = src; renderTicker(); route(); }
+})();
