@@ -1096,7 +1096,7 @@
 
   /* ── join QR: ?join=<url> overrides the phone-view URL ── */
   const params = new URLSearchParams(location.search);
-  const joinUrl = params.get("join") || new URL("../melt/web/index.html#/join", location.href).href;
+  const joinUrl = params.get("join") || "https://meltshopping.vercel.app/join";
   const jq = document.getElementById("join-qr"); jq.dataset.qr = joinUrl; document.getElementById("cover-qr").dataset.qr = joinUrl;
   document.getElementById("join-url").textContent = joinUrl.replace(/^https?:\/\//, "");
 
