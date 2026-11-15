@@ -24,7 +24,7 @@ async function poll(spectator) {
   try { const r = await fetch(`${apiBase()}/live?room=${ROOM}${spectator ? `&spectator=${spectator}` : ''}`); if (!r.ok) throw 0; const j = await r.json(); offline = false; offset = j.view.serverNow - Date.now(); return j; }
   catch { offline = true; return localCall(null); }
 }
-const apiBase = () => (location.pathname.includes('/web/') ? location.pathname.split('/web/')[0] : '') + '/api';
+const apiBase = () => '/api'; // the live function is always served at the site root
 function localCall(body) {
   local ||= fresh(ROOM);
   const { state, reply } = reduce(local, body || { type: 'noop' }, Date.now()); local = state;

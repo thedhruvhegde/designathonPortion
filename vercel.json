@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/", "destination": "/melt/web/", "permanent": false },
+    { "source": "/live", "destination": "/melt/web/#/live", "permanent": false },
+    { "source": "/join", "destination": "/melt/web/#/join", "permanent": false },
+    { "source": "/deck", "destination": "/deck/", "permanent": false }
+  ],
+  "headers": [{ "source": "/api/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }]
+}
