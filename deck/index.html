@@ -124,7 +124,7 @@
   /* 11/12 demo + live */
   .demo-embed{flex:1;border:1.5px solid var(--ink);background:var(--paper);position:relative;min-height:0}
   .demo-embed iframe{position:absolute;left:0;top:0;width:125%;height:125%;transform:scale(.8);transform-origin:0 0;border:0;background:var(--paper)}
-  .demo-embed{overflow:hidden}
+  .demo-embed .clip{position:absolute;inset:0;overflow:hidden}
   .demo-embed .poster{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;align-items:center;gap:var(--gap-sm);text-align:center;padding:var(--gap-lg)}
   .demo-embed.offline iframe{visibility:hidden} .demo-embed.offline .poster{display:flex}
   .demo-embed .cap{position:absolute;left:-1.5px;bottom:-1.5px;transform:translateY(100%);padding-top:8px}
@@ -343,10 +343,10 @@
     <div class="topbar"><h2 class="t-headline">Four states, one ending</h2><span class="t-micro">How it works · nothing reaches the dumpster</span></div>
     <div class="chart lifecycle" id="ch-life"></div>
     <div class="steps">
-      <div data-rise="1"><h3><span class="t-tag">01</span><span class="t-row">Listed</span></h3><p class="t-body">A student lists an item with a hard deadline: their move-out. They pick a melt temperament and see the curve before posting.</p><span class="chip" style="align-self:flex-start">expire</span></div>
-      <div data-rise="2"><h3><span class="t-tag">02</span><span class="t-row">Melting</span></h3><p class="t-body">The price falls on a public curve. Watching adds heat that slows it. A claim gauge tells buyers when to stop waiting.</p><span class="chip" style="align-self:flex-start">decay</span></div>
-      <div data-rise="3"><h3><span class="t-tag">03</span><span class="t-row">Kindness Window</span></h3><p class="t-body">At $0 it's reserved for 2 hours for students who opted in with need flags, matched fairly rather than by who clicks first.</p><span class="chip" style="align-self:flex-start">transform</span></div>
-      <div data-rise="4"><h3><span class="t-tag">04</span><span class="t-row">Donation</span></h3><p class="t-body">Still unclaimed? It becomes a stop on tonight's truck route to the campus reuse store. It never goes in the dumpster.</p><span class="chip fill" style="align-self:flex-start">transform</span></div>
+      <div data-rise="1"><h3><span class="t-tag">01</span><span class="t-row">Listed</span></h3><p class="t-lede">A student lists an item with a hard deadline: their move-out. They pick a melt temperament and see the curve before posting.</p><span class="chip" style="align-self:flex-start">expire</span></div>
+      <div data-rise="2"><h3><span class="t-tag">02</span><span class="t-row">Melting</span></h3><p class="t-lede">The price falls on a public curve. Watching adds heat that slows it. A claim gauge tells buyers when to stop waiting.</p><span class="chip" style="align-self:flex-start">decay</span></div>
+      <div data-rise="3"><h3><span class="t-tag">03</span><span class="t-row">Kindness Window</span></h3><p class="t-lede">At $0 it's reserved for 2 hours for students who opted in with need flags, matched fairly rather than by who clicks first.</p><span class="chip" style="align-self:flex-start">transform</span></div>
+      <div data-rise="4"><h3><span class="t-tag">04</span><span class="t-row">Donation</span></h3><p class="t-lede">Still unclaimed? It becomes a stop on tonight's truck route to the campus reuse store. It never goes in the dumpster.</p><span class="chip fill" style="align-self:flex-start">transform</span></div>
     </div>
   </div>
   <span class="pagenum t-chrome">06</span>
@@ -429,7 +429,7 @@
     <div class="topbar"><h2 class="t-headline">When should I claim?</h2><span class="t-micro">Math · 03 / 04 · optimal stopping</span></div>
     <div class="math-split">
       <div class="math-left">
-        <p class="t-body" data-rise="1">Demand is learned live: arrivals are Poisson with a Gamma prior, so <i>λ̂ = (α₀+n)/(β₀+t)</i>. Each arrival buys with <i>q(p) = σ(a − b·p/p₀)</i>, giving the hazard that someone else claims first, <i>h(t) = λ̂·q(p(t))</i>.</p>
+        <p class="t-body" data-rise="1">Demand is learned live: arrivals are Poisson with a Gamma prior, so the posterior mean is <i>λ = (α₀+n)/(β₀+t)</i>. Each arrival buys with <i>q(p) = σ(a − b·p/p₀)</i>, giving the hazard that someone else claims first, <i>h(t) = λ·q(p(t))</i>.</p>
         <p class="t-body" data-rise="2">Waiting saves <i>−p′</i> per hour but risks losing an item worth <i>v</i> to you. Stop at the first <i>t*</i> where</p>
         <div class="eqn" data-rise="2"><span>−p′(t*) ≤ h(t*) · (v − p(t*))</span></div>
         <div class="gauge" data-rise="3">
@@ -485,14 +485,14 @@
     <div class="topbar"><h2 class="t-headline">Live demo</h2>
       <div class="tabs" id="demo-tabs">
         <button class="btn on" data-route="#/market">Market</button>
-        <button class="btn" data-route="#/item/desk">Item</button>
+        <button class="btn" data-route="#/item/m002">Item</button>
         <button class="btn" data-route="#/kindness">Kindness</button>
         <button class="btn" data-route="#/routes">Routes</button>
         <button class="btn" data-route="#/impact">Impact</button>
       </div>
     </div>
     <div class="demo-embed" id="demo-embed">
-      <iframe id="demo-frame" title="Melt live demo" data-src="../melt/web/index.html#/market"></iframe>
+      <div class="clip"><iframe id="demo-frame" title="Melt live demo" data-src="../melt/web/index.html#/market"></iframe></div>
       <div class="poster">
         <span class="t-micro-strong">Demo loads here</span>
         <p class="t-callout"><em>melt/web · market, item, kindness, routes, impact</em></p>
@@ -527,7 +527,7 @@
         </div>
       </div>
       <div class="demo-embed" id="live-embed">
-        <iframe id="live-frame" title="Melt live auction" data-src="../melt/web/index.html#/live"></iframe>
+        <div class="clip"><iframe id="live-frame" title="Melt live auction" data-src="../melt/web/index.html#/live"></iframe></div>
         <div class="poster">
           <span class="t-micro-strong">Projector view</span>
           <p class="t-callout"><em>melt/web · #/live</em></p>
@@ -770,7 +770,7 @@
     label(g, W, base + 18, "$0 · never the dumpster", "", "end");
     // 01 listed: price tag at p0
     const tag = el("g", {}, g);
-    el("rect", { x: x0(0), y: top, width: cw * 0.55, height: (base - top) * 0.42, fill: "none", stroke: "var(--ink)", "stroke-width": 1.5 }, tag);
+    el("rect", { x: x0(0), y: top, width: cw * 0.55, height: Math.min(64, (base - top) * 0.42), fill: "none", stroke: "var(--ink)", "stroke-width": 1.5 }, tag);
     label(tag, x0(0) + 12, top + 26, "$80.00", "ser");
     label(tag, x0(0) + 12, top + 44, "T = MOVE-OUT", "lbl");
     const flat = el("path", { d: `M${x0(0) + cw * 0.55} ${top} L${x0(1)} ${top}`, fill: "none", stroke: "var(--ink)", "stroke-width": 2 }, g);
@@ -788,7 +788,7 @@
     const route = el("path", { d: pathD([...stops, depot]), fill: "none", stroke: "var(--ink)", "stroke-width": 1.5, "stroke-dasharray": "0" }, g);
     stops.forEach(([x, y]) => el("rect", { x: x - 4, y: y - 4, width: 8, height: 8, fill: "var(--ink)" }, g));
     el("rect", { x: depot[0] - 9, y: depot[1] - 9, width: 18, height: 18, fill: "var(--paper)", stroke: "var(--ink)", "stroke-width": 1.5 }, g);
-    label(g, depot[0] + 9, depot[1] + 30, "REUSE STORE", "lbl", "end");
+    label(g, depot[0] - 16, depot[1] + 4, "REUSE STORE", "lbl", "end");
     [1, 2, 3].forEach((i) => el("line", { x1: x0(i) - gap / 2, x2: x0(i) - gap / 2, y1: top - 4, y2: base, stroke: "var(--ink-faint)", "stroke-width": 1 }, g));
     draw(flat, 400, 0, animate); draw(curve, 1300, 350, animate); draw(route, 1000, 1900, animate);
     kind.style.opacity = animate ? 0 : 1; if (animate) tween(500, (e) => (kind.style.opacity = e), 1500);
@@ -876,7 +876,7 @@
     const pR = el("path", { d: pathD(data.map((d) => [f.X(d.t), f.Y(d.risk)])), fill: "none", stroke: "var(--ink)", "stroke-width": 2.6 }, f.g);
     const dS = data[4], dR = data.find((d) => d.t >= 28);
     label(f.g, f.X(dS.t) + 12, f.Y(dS.save) - 12, "−p′(t) · what waiting saves", "ser");
-    label(f.g, f.X(dR.t) - 14, f.Y(dR.risk) - 14, "h(t)(v − p) · what waiting risks", "ser", "end");
+    label(f.g, f.X(dR.t) + 10, f.Y(dR.risk) + 26, "h(t)(v − p) · what waiting risks", "ser", "middle");
     const vline = el("line", { x1: f.X(star.t), x2: f.X(star.t), y1: f.Y(0), y2: f.Y(yMax), stroke: "var(--ink)", "stroke-width": 1.5, opacity: animate ? 0 : 1 }, f.g);
     const sl = label(f.g, f.X(star.t) + 8, f.Y(0) - 10, `t* = ${star.t.toFixed(1)}h · $${star.p.toFixed(2)}`, "", "start"); sl.style.opacity = animate ? 0 : 1;
     const cursor = el("line", { x1: 0, x2: 0, y1: f.Y(0), y2: f.Y(yMax), stroke: "var(--ink)", "stroke-width": 1, "stroke-dasharray": "2 3" }, f.g);
